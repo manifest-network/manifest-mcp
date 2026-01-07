@@ -1,4 +1,8 @@
-# Cosmos MCP Server
+# ⚠️ Cosmos MCP Server (Proof of Concept - NOT FOR PRODUCTION)
+
+> **WARNING**: This is a proof-of-concept implementation. **DO NOT USE IN PRODUCTION.**
+>
+> This project has known security vulnerabilities including shell injection risks and is intended for testing and development only. Use at your own risk.
 
 A generic MCP (Model Context Protocol) server for interacting with any Cosmos SDK blockchain. Use Claude to query balances, send transactions, and explore blockchain data - all powered by any Cosmos SDK CLI binary (like `manifestd`, `gaiad`, `simd`, etc.).
 
