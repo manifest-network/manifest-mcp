@@ -8,15 +8,24 @@ export async function initializeKey(): Promise<void> {
 
   try {
     // Try to get the key - if it exists, we're done
-    execSync(`${binary} keys show ${keyName}`, { encoding: 'utf-8' });
+    execSync(`${binary} keys show ${keyName}`, {
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe'], // Suppress stderr
+    });
     return;
   } catch {
-    // Key doesn't exist, create it
-    const mnemonicInput = mnemonic.replace(/"/g, '\\"');
-    execSync(`printf "${mnemonicInput}" | ${binary} keys add ${keyName} --recover --stdin`, {
-      encoding: 'utf-8',
-      stdio: 'pipe',
-    });
+    // Key doesn't exist, create it from mnemonic
+    try {
+      const mnemonicInput = mnemonic.replace(/"/g, '\\"');
+      execSync(`printf "${mnemonicInput}" | ${binary} keys add ${keyName} --recover`, {
+        encoding: 'utf-8',
+        stdio: ['pipe', 'pipe', 'pipe'], // Suppress output
+      });
+    } catch (error) {
+      throw new Error(
+        `Failed to initialize key "${keyName}". Make sure your mnemonic is valid and the binary is installed.`,
+      );
+    }
   }
 }
 
