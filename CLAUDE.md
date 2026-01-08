@@ -30,17 +30,26 @@ npm run watch
 
 ## Configuration
 
-The server requires the following environment variables:
-- `COSMOS_MNEMONIC` (required): BIP39 mnemonic phrase for account key derivation
-- `COSMOS_BINARY` (optional): Path to the Cosmos SDK CLI binary (defaults to `manifestd`)
-- `COSMOS_KEY_NAME` (optional): Name of the key in the CLI keyring (defaults to `mcp-key`)
+All configuration is managed via environment variables (loaded from `.env` file). Copy `.env.example` and customize:
 
-Network configuration is hardcoded in `src/config.ts`:
-- Chain ID: `manifest-ledger-testnet`
-- RPC URL: `https://nodes.liftedinit.tech/manifest/testnet/rpc`
-- REST URL: `https://nodes.liftedinit.tech/manifest/testnet/api`
-- Default token: `umfx` (smallest unit)
-- Gas price: `1.0umfx`
+### Required Variables
+- `COSMOS_MNEMONIC`: BIP39 mnemonic phrase for account key derivation
+- `COSMOS_CHAIN_ID`: Chain ID (e.g., `manifest-ledger-testnet`)
+- `COSMOS_RPC_URL`: RPC endpoint URL
+- `COSMOS_REST_URL`: REST endpoint URL
+- `COSMOS_DENOM`: Token denomination (e.g., `umfx`)
+- `COSMOS_GAS_PRICE`: Gas price (e.g., `1.0umfx`)
+
+### Optional Variables
+- `COSMOS_BINARY` (defaults to `manifestd`): Path to the Cosmos SDK CLI binary
+- `COSMOS_KEY_NAME` (defaults to `mcp-key`): Name of the key in the CLI keyring
+
+### Supported Chains
+Pre-configured examples in `.env.example`:
+- Manifest Network (default)
+- Cosmos Hub (gaiad)
+- Osmosis (osmosisd)
+- Others (customize as needed)
 
 ## Architecture
 
@@ -96,7 +105,7 @@ The MCP server exposes five tools:
 
 **Single account per server**: Uses a single key from the mnemonic. The keyring name is configurable via `COSMOS_KEY_NAME` environment variable.
 
-**Network hardcoding**: Network configuration is hardcoded rather than configurable to simplify deployment and ensure consistent behavior across instances. Can be easily extended if needed.
+**Configuration via environment**: Network and account configuration is managed through environment variables (`.env` file), making it easy to switch chains without code changes.
 
 **Configurable binary path**: The `COSMOS_BINARY` environment variable allows specifying the path to the Cosmos SDK CLI binary, supporting different installation locations or binary names.
 
