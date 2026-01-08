@@ -1,23 +1,47 @@
-export const NETWORK_CONFIG = {
-  chainId: 'manifest-ledger-testnet',
-  rpcUrl: 'https://nodes.liftedinit.tech/manifest/testnet/rpc',
-  restUrl: 'https://nodes.liftedinit.tech/manifest/testnet/api',
-  denom: 'umfx',
-  gasPrice: '1.0umfx',
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
+
+export interface NetworkConfig {
+  chainId: string;
+  rpcUrl: string;
+  restUrl: string;
+  denom: string;
+  gasPrice: string;
+}
+
+export const NETWORK_CONFIG: NetworkConfig = {
+  chainId: getEnvRequired('COSMOS_CHAIN_ID'),
+  rpcUrl: getEnvRequired('COSMOS_RPC_URL'),
+  restUrl: getEnvRequired('COSMOS_REST_URL'),
+  denom: getEnvRequired('COSMOS_DENOM'),
+  gasPrice: getEnvRequired('COSMOS_GAS_PRICE'),
 };
 
 export const getMnemonic = (): string => {
-  const mnemonic = process.env.COSMOS_MNEMONIC;
-  if (!mnemonic) {
-    throw new Error('COSMOS_MNEMONIC environment variable is not set');
-  }
-  return mnemonic;
+  return getEnvRequired('COSMOS_MNEMONIC');
 };
 
 export const getKeyName = (): string => {
-  return process.env.COSMOS_KEY_NAME || 'mcp-key';
+  return getEnvOptional('COSMOS_KEY_NAME', 'mcp-key');
 };
 
 export const getBinaryPath = (): string => {
-  return process.env.COSMOS_BINARY || 'manifestd';
+  return getEnvOptional('COSMOS_BINARY', 'manifestd');
 };
+
+// Helper functions
+function getEnvRequired(key: string): string {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(
+      `Environment variable ${key} is not set. Please check your .env file or environment.`,
+    );
+  }
+  return value;
+}
+
+function getEnvOptional(key: string, defaultValue: string): string {
+  return process.env[key] || defaultValue;
+}

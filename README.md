@@ -64,18 +64,48 @@ manifestd version  # or gaiad version, osmosisd version, etc.
 
 ### 3. Set Up Environment
 
-Export these environment variables:
+Create a `.env` file in the project root:
 
 ```bash
-# Required
-export COSMOS_MNEMONIC="your bip39 mnemonic phrase here"
-
-# Optional (defaults shown)
-export COSMOS_BINARY="manifestd"
-export COSMOS_KEY_NAME="mcp-key"
+cp .env.example .env
 ```
 
-> **Security**: Never expose your mnemonic in shell history or scripts. Use a secure secrets manager for production deployments.
+Edit `.env` with your configuration:
+
+```bash
+# Required - Network Configuration
+COSMOS_CHAIN_ID=manifest-ledger-testnet
+COSMOS_RPC_URL=https://nodes.liftedinit.tech/manifest/testnet/rpc
+COSMOS_REST_URL=https://nodes.liftedinit.tech/manifest/testnet/api
+COSMOS_DENOM=umfx
+COSMOS_GAS_PRICE=1.0umfx
+
+# Required - Account
+COSMOS_MNEMONIC="your bip39 mnemonic phrase here"
+
+# Optional - Keyring (defaults shown)
+COSMOS_KEY_NAME=mcp-key
+COSMOS_BINARY=manifestd
+```
+
+**To use a different chain**, edit the network variables:
+
+```bash
+# Example: Cosmos Hub
+COSMOS_CHAIN_ID=cosmoshub-4
+COSMOS_RPC_URL=https://rpc.cosmos.network
+COSMOS_REST_URL=https://lcd.cosmos.network
+COSMOS_DENOM=uatom
+COSMOS_GAS_PRICE=0.025uatom
+COSMOS_BINARY=gaiad
+```
+
+See `.env.example` for more chain examples.
+
+> **Security**:
+> - Never commit `.env` to version control (it's in `.gitignore`)
+> - Never expose your mnemonic in shell history or code
+> - Use a secure secrets manager for production deployments
 
 ### 4. Add to Claude
 
@@ -161,37 +191,19 @@ This uses:
 | `cosmos_query` | Execute any query command | Query blockchain state |
 | `cosmos_tx` | Execute any transaction | Modify blockchain state |
 
-## Network Configuration
+## Supported Networks
 
-Default configuration is for Manifest Testnet:
+All configuration is done via `.env` file (see installation section above).
 
+### Default: Manifest Network Testnet
 - **Chain ID**: `manifest-ledger-testnet`
 - **RPC**: `https://nodes.liftedinit.tech/manifest/testnet/rpc`
 - **REST**: `https://nodes.liftedinit.tech/manifest/testnet/api`
-- **Token Denom**: `umfx` (smallest unit)
-- **Gas Price**: `1.0umfx`
+- **Token**: `umfx` (gas price: `1.0umfx`)
 
-### Using a Different Chain
+### Switching Chains
 
-To use this server with a different Cosmos SDK chain, edit `src/config.ts`:
-
-```typescript
-export const NETWORK_CONFIG = {
-  chainId: 'cosmoshub-4',           // Your chain's chain ID
-  rpcUrl: 'https://rpc.cosmos.network',
-  restUrl: 'https://lcd.cosmos.network',
-  denom: 'uatom',                   // Your chain's token denom
-  gasPrice: '0.025uatom',           // Your chain's gas price
-};
-```
-
-Then rebuild:
-
-```bash
-npm run build
-export COSMOS_BINARY="gaiad"  # or your chain's binary name
-npm start
-```
+Simply update your `.env` file with the desired chain's configuration. See `.env.example` for examples of Cosmos Hub, Osmosis, and other chains.
 
 ## Development
 
